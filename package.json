@@ -1,0 +1,15 @@
+{
+  "name": "porfolio",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Ankit Shekhar",
+  "type": "module",
+  "main": "server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
