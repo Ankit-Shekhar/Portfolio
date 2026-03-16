@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { DB_NAME } from "../../constants.js";
-const connectDb = async () => {
+const connectMongoDb = async () => {
     try {
 
         //mongoose actually returns an object which we can store in a variable, here its "connectionInstance"
@@ -15,4 +15,4 @@ const connectDb = async () => {
     }
 }
 
-export default connectDb
+export default connectMongoDb

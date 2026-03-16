@@ -1,4 +1,4 @@
-# Portfolio Project — Interview Explanation
+# Portfolio Project - Interview Explanation
 
 ## Project Overview
 
@@ -7,6 +7,26 @@ This project is an interactive portfolio designed as a simulated desktop operati
 Instead of traditional webpages, users interact with a desktop environment containing applications that display the developer's projects and skills.
 
 The system also includes an AI agent capable of answering questions about the developer’s work.
+
+---
+
+# Final Repository Setup
+
+The current repository structure is final.
+
+It is organized into:
+
+* frontend
+* backend
+* docs
+
+The backend is a standalone Node.js workspace.
+
+That means:
+
+* package management is inside backend
+* environment files are inside backend
+* the AI subsystem is implemented inside backend/src/ai
 
 ---
 
@@ -44,8 +64,8 @@ Project documentation and GitHub README files are converted into vector embeddin
 
 When a user asks a question:
 
-the system retrieves relevant documents  
-the AI model receives these documents as context  
+the backend AI subsystem retrieves relevant documents  
+the model receives these documents as context  
 the AI generates an answer
 
 ---
@@ -54,7 +74,7 @@ the AI generates an answer
 
 MongoDB for structured data.
 
-Chroma vector database for embeddings.
+Vector database for embeddings.
 
 Redis for event logging and caching.
 
@@ -62,11 +82,9 @@ Redis for event logging and caching.
 
 # AI Development
 
-During development the system uses a local model via Ollama.
+The AI system is orchestrated from the backend codebase rather than a separate repository layer.
 
-Due to hardware constraints a lightweight model such as Phi-3 Mini is used.
-
-For deployment, HuggingFace inference endpoints provide more powerful models.
+Model provider choice can be changed later without changing the frontend architecture.
 
 ---
 
@@ -77,7 +95,8 @@ tool based reasoning
 retrieval augmented generation  
 vector databases  
 observability systems  
-desktop UI simulation
+desktop UI simulation  
+domain-driven backend modules
 
 ---
 
@@ -89,8 +108,10 @@ Designing a realistic desktop UI.
 
 Building an automated GitHub indexing pipeline.
 
+Keeping the docs aligned with the actual repository structure.
+
 ---
 
 # Outcome
 
-The final system acts as a knowledge assistant for the developer’s portfolio and demonstrates both frontend engineering and AI system design.
+The final system acts as a knowledge assistant for the developer's portfolio and demonstrates frontend engineering, backend modular architecture, and AI system design in one repository.

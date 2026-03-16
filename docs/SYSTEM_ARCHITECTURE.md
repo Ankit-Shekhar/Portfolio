@@ -2,11 +2,11 @@
 
 ## System Overview
 
-The system consists of four main layers.
+The system consists of three main layers and one embedded intelligence subsystem.
 
 Frontend OS Simulation  
 Backend API Layer  
-AI Agent System  
+Backend AI Subsystem  
 Data Storage Layer
 
 ---
@@ -21,19 +21,40 @@ React Portfolio OS
 ▼
 Backend API (Node.js + Express)
 │
-├── AI Agent Controller
-├── GitHub Indexing Pipeline
 ├── Project API
+├── Skills API
+├── Timeline API
 ├── Contact API
-├── Timeline Story Service
-└── Event Logger
+├── Analytics API
+├── GitHub Integration API
+└── AI Agent API
+	│
+	├── Agent Controller
+	├── Tool Selector
+	├── Vector Search Tools
+	├── GitHub Indexing Pipeline
+	└── Pipeline Event Logger
 │
 ▼
 Databases
 │
 ├── MongoDB
-├── Chroma Vector Database
+├── Vector Database
 └── Redis
+
+---
+
+# Repository Layout
+
+The final repository layout is:
+
+Porfolio/  
+frontend/  
+backend/  
+docs/
+
+The backend is a standalone Node workspace with its own package.json, lockfile,
+environment file, and integrated AI subsystem inside backend/src/ai.
 
 ---
 
@@ -47,7 +68,7 @@ Terminal Landing Interface
 OS Evolution Animation  
 Desktop Environment  
 Window Manager  
-Application Launcher  
+Application Launcher
 
 Applications:
 
@@ -55,7 +76,9 @@ Projects App
 Skills App  
 Architecture Viewer  
 AI Agent Window  
+Pipeline Renderer  
 Broken Dreams Timeline  
+Contact App
 
 ---
 
@@ -67,21 +90,52 @@ opening apps
 closing windows  
 dragging windows  
 resizing windows  
-window stacking  
+window stacking
 
 ---
 
-# AI Agent Architecture
+# Backend Architecture
 
-The AI agent follows a tool-based reasoning architecture.
+The backend is organized around feature modules and shared core components.
 
-Available tools include:
+Feature modules:
+
+projects  
+skills  
+timeline  
+ai-agent  
+github  
+contact  
+analytics
+
+Core backend areas:
+
+config  
+database  
+middlewares  
+utils  
+jobs
+
+---
+
+# AI Subsystem Architecture
+
+The AI subsystem is part of the backend codebase under backend/src/ai.
+
+Its main areas are:
+
+embeddings  
+vector-db  
+github-indexer  
+agent  
+pipeline
+
+Available tool categories include:
 
 vector_search  
 read_file  
-list_directory  
-get_project_details  
-github_fetch  
+list_projects  
+github_fetch
 
 ---
 
@@ -93,19 +147,19 @@ User Query
 Frontend sends API request
 │
 ▼
-Agent Controller receives query
+Backend AI endpoint receives query
 │
 ▼
-Model determines intent
+Agent controller evaluates request
 │
 ▼
 Tool is selected
 │
 ▼
-Tool retrieves information
+Relevant project context is retrieved
 │
 ▼
-AI generates response
+LLM generates response
 │
 ▼
 Frontend renders answer
@@ -120,7 +174,7 @@ Fetch repositories from GitHub
 Extract README content  
 Chunk documentation  
 Generate embeddings  
-Store in vector database  
+Store results in the vector layer
 
 ---
 
@@ -128,7 +182,7 @@ Store in vector database
 
 The timeline content is stored in MongoDB.
 
-Example data structure:
+Example collection:
 
 timeline_events
 
@@ -138,9 +192,9 @@ title
 description  
 year_range  
 animation_scene  
-visual_assets  
+visual_assets
 
-The frontend renders these scenes using animation libraries.
+The frontend renders these scenes through the timeline application.
 
 ---
 
@@ -152,36 +206,39 @@ projects
 skills  
 timeline_events  
 contact_messages  
+analytics_events
 
-Chroma Vector DB
+Vector Database
 
-project documentation embeddings
+project documentation embeddings  
+README embeddings  
+architecture notes
 
 Redis
 
 event logs  
-agent state caching  
+agent state caching
 
 ---
 
-# Deployment
+# Deployment Direction
 
 Frontend
 
-Vercel
+Deployed separately as the UI application.
 
 Backend
 
-Render
+Deployed as the main API and AI orchestration service.
 
 Database
 
 MongoDB Atlas
 
-Vector DB
+Vector Layer
 
-Chroma
+Chroma or an equivalent vector store behind the backend AI subsystem.
 
-AI
+AI Inference
 
-HuggingFace inference
+Handled through the backend AI subsystem using the selected model provider.

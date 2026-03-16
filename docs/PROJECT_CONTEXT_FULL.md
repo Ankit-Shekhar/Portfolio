@@ -30,7 +30,27 @@ The goal is to demonstrate strong capabilities in:
 
 ---
 
-# 2. Key Goals of the Project
+# 2. Final Repository Context
+
+The current repository structure is final.
+
+The project is organized into:
+
+* frontend
+* backend
+* docs
+
+Important final decisions:
+
+* the backend is a standalone Node.js workspace with its own package.json and package-lock.json
+* backend environment configuration lives inside the backend folder
+* the AI system is integrated into the backend under backend/src/ai
+* there is no separate top-level ai folder in the final repository
+* the docs folder should always describe the current repository shape, not an earlier planned variation
+
+---
+
+# 3. Key Goals of the Project
 
 The system is designed to achieve the following goals.
 
@@ -99,13 +119,13 @@ This transforms the portfolio into a **data-aware system**.
 
 ---
 
-# 3. Portfolio Flow (User Journey)
+# 4. Portfolio Flow (User Journey)
 
 The system guides the visitor through a structured experience.
 
 ---
 
-## Step 1 — Terminal Landing Interface
+## Step 1 - Terminal Landing Interface
 
 When the website opens, the user sees a **terminal-style interface**.
 
@@ -121,7 +141,7 @@ The terminal introduces the developer and prepares the user for the experience.
 
 ---
 
-## Step 2 — OS Selection
+## Step 2 - OS Selection
 
 The visitor selects the interface style:
 
@@ -132,19 +152,19 @@ This selection loads the operating system UI.
 
 ---
 
-## Step 3 — OS Evolution Animation
+## Step 3 - OS Evolution Animation
 
 Before entering the desktop, the user scrolls through a **timeline of operating system evolution**.
 
 Example progression:
 
-Windows XP → Windows 7 → Windows 10 → Windows 11
+Windows XP -> Windows 7 -> Windows 10 -> Windows 11
 
 This animation symbolises the **developer's technological evolution**.
 
 ---
 
-## Step 4 — Desktop Environment
+## Step 4 - Desktop Environment
 
 The visitor then enters the **desktop interface**.
 
@@ -163,7 +183,7 @@ Users can open these applications just like a real operating system.
 
 ---
 
-# 4. Desktop Applications
+# 5. Desktop Applications
 
 Each desktop icon launches an application window.
 
@@ -223,7 +243,7 @@ Example queries:
 * "What backend technologies does Ankit use?"
 * "How does the AI agent work?"
 
-The AI agent retrieves relevant information using a **Retrieval Augmented Generation (RAG) pipeline**.
+The AI agent retrieves relevant information using a Retrieval Augmented Generation pipeline implemented inside the backend AI subsystem.
 
 ---
 
@@ -277,9 +297,11 @@ Messages are stored in the backend database.
 
 ---
 
-# 5. AI System Overview
+# 6. AI System Overview
 
-The AI agent uses a **Retrieval Augmented Generation architecture**.
+The AI agent uses a Retrieval Augmented Generation architecture.
+
+In the final repository structure, the AI system lives inside backend/src/ai and is treated as a backend-owned subsystem.
 
 Information sources include:
 
@@ -301,7 +323,7 @@ This ensures answers are grounded in real project data.
 
 ---
 
-# 6. GitHub Repository Indexing
+# 7. GitHub Repository Indexing
 
 The system automatically indexes the developer's GitHub repositories.
 
@@ -317,7 +339,7 @@ This allows the AI agent to answer questions about real projects.
 
 ---
 
-# 7. Visitor Analytics System
+# 8. Visitor Analytics System
 
 The portfolio includes a **lightweight analytics system**.
 
@@ -354,7 +376,7 @@ This turns the portfolio into a **data-aware system**.
 
 ---
 
-# 8. System Design Philosophy
+# 9. System Design Philosophy
 
 The project follows several engineering principles.
 
@@ -379,8 +401,8 @@ Example modules:
 Responsibilities are clearly separated:
 
 * frontend handles UI
-* backend handles business logic
-* AI layer handles intelligence
+* backend handles business logic and API delivery
+* backend AI subsystem handles intelligence workflows
 
 ---
 
@@ -392,7 +414,7 @@ New applications can easily be added to the desktop.
 
 ---
 
-# 9. Technologies Used
+# 10. Technologies Used
 
 Frontend technologies include:
 
@@ -412,16 +434,18 @@ AI system technologies include:
 * vector embeddings
 * vector database
 * retrieval pipelines
+* tool-based orchestration
 
 Developer tooling includes:
 
 * GitHub
 * automated repository indexing
 * modular backend architecture
+* backend-local environment and package management
 
 ---
 
-# 10. Final Vision
+# 11. Final Vision
 
 The AI Portfolio Operating System is designed to be more than a portfolio.
 

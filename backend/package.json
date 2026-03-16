@@ -14,10 +14,12 @@
     "prettier": "^3.8.1"
   },
   "dependencies": {
+    "chromadb": "^3.3.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "mongoose": "^9.3.0"
+    "mongoose": "^9.3.0",
+    "redis": "^5.11.0"
   }
 }
