@@ -5,6 +5,10 @@ import mongoose from "mongoose";
 import projectRoutes from "./modules/projects/project.routes.js";
 import timelineRoutes from "./modules/timeline/timeline.routes.js";
 import aiAgentRoutes from "./modules/ai-agent/agent.routes.js";
+import skillRoutes from "./modules/skills/skill.routes.js";
+import githubRoutes from "./modules/github/github.routes.js";
+import contactRoutes from "./modules/contact/contact.routes.js";
+import analyticsRoutes from "./modules/analytics/analytics.routes.js";
 import { errorHandler } from "./core/middlewares/error.middleware.js";
 import { getRedisClient } from "./core/database/redis.connection.js";
 import { getVectorClient } from "./core/database/vector.connection.js";
@@ -74,6 +78,10 @@ app.get("/api/v1/readiness", (req, res) => {
 app.use("/api/v1/projects", projectRoutes);
 app.use("/api/v1/timeline", timelineRoutes);
 app.use("/api/v1/ai-agent", aiAgentRoutes);
+app.use("/api/v1/skills", skillRoutes);
+app.use("/api/v1/github", githubRoutes);
+app.use("/api/v1/contact", contactRoutes);
+app.use("/api/v1/analytics", analyticsRoutes);
 
 // global error handler middleware should be mounted after all routes
 app.use(errorHandler);

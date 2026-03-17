@@ -7,7 +7,8 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/server.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/server.js",
+    "test:api-sequence": "node scripts/runBackendApiSequence.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",

@@ -21,4 +21,30 @@ const buildEmbeddableDocument = ({ idPrefix, text, metadata }) => {
 	};
 };
 
-export { buildEmbeddableDocument };
+const createDeterministicEmbedding = (text, dimensions = 128) => {
+	const normalizedText = (text || "").replace(/\s+/g, " ").trim();
+
+	if (!normalizedText) {
+		return Array.from({ length: dimensions }, () => 0);
+	}
+
+	const vector = [];
+	let nonce = 0;
+
+	while (vector.length < dimensions) {
+		const digest = crypto.createHash("sha256").update(`${normalizedText}::${nonce}`).digest();
+
+		for (let index = 0; index < digest.length && vector.length < dimensions; index += 1) {
+			const value = digest[index] / 255;
+			vector.push(value * 2 - 1);
+		}
+
+		nonce += 1;
+	}
+
+	const magnitude = Math.sqrt(vector.reduce((sum, value) => sum + value * value, 0)) || 1;
+
+	return vector.map((value) => value / magnitude);
+};
+
+export { buildEmbeddableDocument, createDeterministicEmbedding };
