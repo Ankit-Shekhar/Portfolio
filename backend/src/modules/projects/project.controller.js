@@ -9,6 +9,7 @@ import {
 	updateProjectById,
 	deleteProjectById
 } from "./project.service.js";
+import { validateCreateProjectPayload, validateUpdateProjectPayload } from "./project.validation.js";
 
 const createProjectController = asyncHandler(async (req, res) => {
 	const {
@@ -21,11 +22,7 @@ const createProjectController = asyncHandler(async (req, res) => {
 		architectureNotes,
 		impactExplanation,
 		featured
-	} = req.body;
-
-	if (!title || !slug || !description) {
-		throw new ApiError(400, "title, slug and description are required");
-	}
+	} = validateCreateProjectPayload(req.body || {});
 
 	const project = await createProject({
 		title,
@@ -71,7 +68,9 @@ const updateProjectByIdController = asyncHandler(async (req, res) => {
 		throw new ApiError(400, "Invalid project id");
 	}
 
-	const updatedProject = await updateProjectById(projectId, req.body);
+	const updatePayload = validateUpdateProjectPayload(req.body || {});
+
+	const updatedProject = await updateProjectById(projectId, updatePayload);
 
 	if (!updatedProject) {
 		throw new ApiError(404, "Project not found");

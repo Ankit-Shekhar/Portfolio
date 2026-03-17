@@ -1,5 +1,8 @@
 import { vectorSearch } from "../../ai/agent/tools/vectorSearch.tool.js";
 import { listProjects } from "../../ai/agent/tools/listProjects.tool.js";
+import { runEmbeddingIndexJob } from "../../jobs/embedding.job.js";
+import { runRepositoryIndexerJob } from "../../jobs/repoIndexer.job.js";
+import { runSeedDataJob } from "../../jobs/seedData.job.js";
 
 const askPortfolioAgent = async (query) => {
 	let vectorMatches = [];
@@ -31,4 +34,47 @@ const askPortfolioAgent = async (query) => {
 	};
 };
 
-export { askPortfolioAgent };
+const indexPortfolioKnowledge = async (payload = {}) => {
+	const repositoryDocuments = Array.isArray(payload.repositoryDocuments) ? payload.repositoryDocuments : [];
+	const errors = [];
+	let embeddingResult = {
+		projectsIndexed: 0,
+		timelineEventsIndexed: 0,
+		knowledgeChunksIndexed: 0
+	};
+	let repositoryResult = {
+		repositoriesIndexed: repositoryDocuments.length,
+		knowledgeChunksIndexed: 0
+	};
+
+	try {
+		embeddingResult = await runEmbeddingIndexJob();
+	} catch (error) {
+		errors.push({
+			stage: "embedding-index",
+			message: error?.message || "Failed to index embedding knowledge"
+		});
+	}
+
+	try {
+		repositoryResult = await runRepositoryIndexerJob(repositoryDocuments);
+	} catch (error) {
+		errors.push({
+			stage: "repository-index",
+			message: error?.message || "Failed to index repository documents"
+		});
+	}
+
+	return {
+		embeddingResult,
+		repositoryResult,
+		errors
+	};
+};
+
+const seedPortfolioData = async () => {
+	const result = await runSeedDataJob();
+	return result;
+};
+
+export { askPortfolioAgent, indexPortfolioKnowledge, seedPortfolioData };

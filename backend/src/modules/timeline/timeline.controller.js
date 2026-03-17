@@ -9,6 +9,7 @@ import {
 	updateTimelineEventById,
 	deleteTimelineEventById
 } from "./timeline.service.js";
+import { validateCreateTimelinePayload, validateUpdateTimelinePayload } from "./timeline.validation.js";
 
 const createTimelineEventController = asyncHandler(async (req, res) => {
 	const {
@@ -19,11 +20,7 @@ const createTimelineEventController = asyncHandler(async (req, res) => {
 		visualAssets,
 		sequence,
 		featured
-	} = req.body;
-
-	if (!title || !description || !yearRange) {
-		throw new ApiError(400, "title, description and yearRange are required");
-	}
+	} = validateCreateTimelinePayload(req.body || {});
 
 	const timelineEvent = await createTimelineEvent({
 		title,
@@ -67,7 +64,9 @@ const updateTimelineEventByIdController = asyncHandler(async (req, res) => {
 		throw new ApiError(400, "Invalid timeline event id");
 	}
 
-	const updatedTimelineEvent = await updateTimelineEventById(timelineEventId, req.body);
+	const updatePayload = validateUpdateTimelinePayload(req.body || {});
+
+	const updatedTimelineEvent = await updateTimelineEventById(timelineEventId, updatePayload);
 
 	if (!updatedTimelineEvent) {
 		throw new ApiError(404, "Timeline event not found");
