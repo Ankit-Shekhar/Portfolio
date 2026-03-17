@@ -1,6 +1,12 @@
 # Created by https://gitignore.org
 # Node.gitignore
 
+exampleControllers
+exampleMiddlewares
+exampleModels
+exampleRoutes
+
+
 # Logs
 logs
 *.log
