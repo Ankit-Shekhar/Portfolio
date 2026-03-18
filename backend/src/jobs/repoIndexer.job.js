@@ -1,9 +1,23 @@
 import { chunkText } from "../ai/embeddings/chunker.js";
 import { buildEmbeddableDocument } from "../ai/embeddings/embedder.js";
 import { upsertKnowledgeDocuments } from "../ai/vector-db/vectorStore.js";
+import { fetchRepositoriesForIndexing } from "../ai/github-indexer/repoFetcher.js";
+import { parseRepositoryDocuments } from "../ai/github-indexer/readmeParser.js";
 
 const runRepositoryIndexerJob = async (repositoryDocuments = []) => {
-	if (!Array.isArray(repositoryDocuments) || repositoryDocuments.length === 0) {
+	let sourceRepositoryDocuments = Array.isArray(repositoryDocuments) ? repositoryDocuments : [];
+
+	if (sourceRepositoryDocuments.length === 0) {
+		const { repositoryDocuments: fetchedRepositoryDocuments } = await fetchRepositoriesForIndexing({
+			username: process.env.GITHUB_USERNAME || "Ankit-Shekhar",
+			maxRepositories: Number(process.env.GITHUB_INDEX_REPO_LIMIT || 5)
+		});
+		sourceRepositoryDocuments = fetchedRepositoryDocuments;
+	}
+
+	const parsedRepositoryDocuments = parseRepositoryDocuments(sourceRepositoryDocuments);
+
+	if (parsedRepositoryDocuments.length === 0) {
 		return {
 			repositoriesIndexed: 0,
 			knowledgeChunksIndexed: 0
@@ -12,7 +26,7 @@ const runRepositoryIndexerJob = async (repositoryDocuments = []) => {
 
 	const knowledgeDocuments = [];
 
-	for (const repoDoc of repositoryDocuments) {
+	for (const repoDoc of parsedRepositoryDocuments) {
 		const repositoryId = repoDoc?.id || repoDoc?.name || "unknown_repo";
 		const repositoryText = repoDoc?.content || "";
 
@@ -41,7 +55,7 @@ const runRepositoryIndexerJob = async (repositoryDocuments = []) => {
 	const result = await upsertKnowledgeDocuments(knowledgeDocuments);
 
 	return {
-		repositoriesIndexed: repositoryDocuments.length,
+		repositoriesIndexed: parsedRepositoryDocuments.length,
 		knowledgeChunksIndexed: result.upsertedCount
 	};
 };

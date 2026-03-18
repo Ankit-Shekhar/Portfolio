@@ -1,8 +1,8 @@
 import { ApiError } from "../../core/utils/ApiError.js";
 import { ApiResponse } from "../../core/utils/ApiResponse.js";
 import { asyncHandler } from "../../core/utils/asyncHandler.js";
-import { askPortfolioAgent, indexPortfolioKnowledge, seedPortfolioData } from "./agent.service.js";
-import { validateAgentQueryPayload, validateKnowledgeIndexPayload } from "./agent.validation.js";
+import { askPortfolioAgent, indexPortfolioKnowledge, seedPortfolioData, getPipelineEvents } from "./agent.service.js";
+import { validateAgentQueryPayload, validateKnowledgeIndexPayload, validatePipelineEventsQuery } from "./agent.validation.js";
 
 const askAgentController = asyncHandler(async (req, res) => {
 	const { query } = validateAgentQueryPayload(req.body || {});
@@ -25,4 +25,11 @@ const seedDataController = asyncHandler(async (req, res) => {
 	return res.status(200).json(new ApiResponse(200, "Sample data seeded successfully", result));
 });
 
-export { askAgentController, indexKnowledgeController, seedDataController };
+const getPipelineEventsController = asyncHandler(async (req, res) => {
+	const { limit } = validatePipelineEventsQuery(req.query || {});
+	const events = await getPipelineEvents(limit);
+
+	return res.status(200).json(new ApiResponse(200, "Pipeline events fetched successfully", events));
+});
+
+export { askAgentController, indexKnowledgeController, seedDataController, getPipelineEventsController };

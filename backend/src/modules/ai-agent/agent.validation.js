@@ -26,4 +26,16 @@ const validateKnowledgeIndexPayload = (payload = {}) => {
 	return { repositoryDocuments };
 };
 
-export { validateAgentQueryPayload, validateKnowledgeIndexPayload };
+const validatePipelineEventsQuery = (query = {}) => {
+	const limitValue = Number(query.limit);
+
+	if (query.limit !== undefined && Number.isNaN(limitValue)) {
+		throw new ApiError(400, "limit must be a number");
+	}
+
+	return {
+		limit: Number.isNaN(limitValue) ? 25 : limitValue
+	};
+};
+
+export { validateAgentQueryPayload, validateKnowledgeIndexPayload, validatePipelineEventsQuery };
