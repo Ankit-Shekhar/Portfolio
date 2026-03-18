@@ -11,7 +11,68 @@ import {
 } from "./contact.service.js";
 import { validateCreateContactPayload, validateUpdateContactPayload } from "./contact.validation.js";
 
+const verifyTurnstileForContactSubmit = async (req) => {
+	const turnstileSecretKey = process.env.TURNSTILE_SECRET_KEY;
+	const isTurnstileRequired = String(process.env.TURNSTILE_REQUIRED || "false").toLowerCase() === "true";
+
+	if (!turnstileSecretKey) {
+		return;
+	}
+
+	const tokenFromBody =
+		typeof req.body?.turnstileToken === "string"
+			? req.body.turnstileToken
+			: typeof req.body?.cfTurnstileResponse === "string"
+				? req.body.cfTurnstileResponse
+				: "";
+
+	const token = tokenFromBody.trim();
+
+	if (!token) {
+		if (isTurnstileRequired) {
+			throw new ApiError(400, "Turnstile token is required");
+		}
+
+		return;
+	}
+
+	const remoteIp = (req.ip || req.socket?.remoteAddress || "").trim();
+	const formData = new URLSearchParams();
+
+	formData.append("secret", turnstileSecretKey);
+	formData.append("response", token);
+
+	if (remoteIp) {
+		formData.append("remoteip", remoteIp);
+	}
+
+	let verificationResponse;
+
+	try {
+		verificationResponse = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+			method: "POST",
+			headers: {
+				"content-type": "application/x-www-form-urlencoded"
+			},
+			body: formData.toString()
+		});
+	} catch {
+		throw new ApiError(503, "Turnstile verification service is unavailable");
+	}
+
+	if (!verificationResponse.ok) {
+		throw new ApiError(503, "Turnstile verification failed due to upstream error");
+	}
+
+	const verificationPayload = await verificationResponse.json();
+
+	if (!verificationPayload?.success) {
+		throw new ApiError(400, "Turnstile verification failed");
+	}
+};
+
 const createContactMessageController = asyncHandler(async (req, res) => {
+	await verifyTurnstileForContactSubmit(req);
 	const payload = validateCreateContactPayload(req.body || {});
 	const createdMessage = await createContactMessage(payload);
 

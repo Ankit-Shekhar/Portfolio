@@ -1,4 +1,8 @@
 import mongoose, { Schema } from "mongoose";
+import { deleteCacheKey, getCacheJson, setCacheJson } from "../../core/cache/redisCache.js";
+
+const ANALYTICS_SUMMARY_CACHE_KEY = "analytics:summary:v1";
+const ANALYTICS_SUMMARY_CACHE_TTL_SECONDS = Number(process.env.ANALYTICS_SUMMARY_CACHE_TTL_SECONDS || 120);
 
 const analyticsEventSchema = new Schema(
 	{
@@ -32,6 +36,7 @@ const AnalyticsEvent = mongoose.models.AnalyticsEvent || mongoose.model("Analyti
 
 const trackAnalyticsEvent = async (payload) => {
 	const event = await AnalyticsEvent.create(payload);
+	await deleteCacheKey(ANALYTICS_SUMMARY_CACHE_KEY);
 	return event;
 };
 
@@ -43,6 +48,12 @@ const getAnalyticsEvents = async (limit = 50) => {
 };
 
 const getAnalyticsSummary = async () => {
+	const cachedSummary = await getCacheJson(ANALYTICS_SUMMARY_CACHE_KEY);
+
+	if (cachedSummary) {
+		return cachedSummary;
+	}
+
 	const [totalEvents, eventTypeStats, projectStats] = await Promise.all([
 		AnalyticsEvent.countDocuments(),
 		AnalyticsEvent.aggregate([
@@ -57,11 +68,15 @@ const getAnalyticsSummary = async () => {
 		])
 	]);
 
-	return {
+	const summary = {
 		totalEvents,
 		eventsByType: eventTypeStats.map((item) => ({ eventType: item._id, count: item.count })),
 		topProjects: projectStats.map((item) => ({ projectId: item._id, count: item.count }))
 	};
+
+	await setCacheJson(ANALYTICS_SUMMARY_CACHE_KEY, summary, ANALYTICS_SUMMARY_CACHE_TTL_SECONDS);
+
+	return summary;
 };
 
 export { trackAnalyticsEvent, getAnalyticsEvents, getAnalyticsSummary };

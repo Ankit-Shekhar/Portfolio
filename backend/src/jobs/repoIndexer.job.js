@@ -4,13 +4,13 @@ import { upsertKnowledgeDocuments } from "../ai/vector-db/vectorStore.js";
 import { fetchRepositoriesForIndexing } from "../ai/github-indexer/repoFetcher.js";
 import { parseRepositoryDocuments } from "../ai/github-indexer/readmeParser.js";
 
-const runRepositoryIndexerJob = async (repositoryDocuments = []) => {
+const runRepositoryIndexerJob = async (repositoryDocuments = [], options = {}) => {
 	let sourceRepositoryDocuments = Array.isArray(repositoryDocuments) ? repositoryDocuments : [];
 
 	if (sourceRepositoryDocuments.length === 0) {
 		const { repositoryDocuments: fetchedRepositoryDocuments } = await fetchRepositoriesForIndexing({
-			username: process.env.GITHUB_USERNAME || "Ankit-Shekhar",
-			maxRepositories: Number(process.env.GITHUB_INDEX_REPO_LIMIT || 5)
+			username: options.username || process.env.GITHUB_USERNAME || "Ankit-Shekhar",
+			maxRepositories: Number(options.maxRepositories || process.env.GITHUB_INDEX_REPO_LIMIT || 5)
 		});
 		sourceRepositoryDocuments = fetchedRepositoryDocuments;
 	}

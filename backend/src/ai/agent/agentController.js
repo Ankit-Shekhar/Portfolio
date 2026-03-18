@@ -6,18 +6,21 @@ import { githubFetch } from "./tools/githubFetch.tool.js";
 import { logPipelineEvent } from "../pipeline/pipelineLogger.js";
 import { PIPELINE_EVENTS } from "../pipeline/pipelineEvents.js";
 
-const runAgentWorkflow = async (query) => {
+const runAgentWorkflow = async (query, options = {}) => {
+	const requestId = options.requestId || null;
 	const selectedTool = selectToolForQuery(query);
 	let vectorMatches = [];
 	let toolResult = null;
 
 	await logPipelineEvent(PIPELINE_EVENTS.QUERY_RECEIVED, {
-		query
+		query,
+		requestId
 	});
 
 	await logPipelineEvent(PIPELINE_EVENTS.TOOL_SELECTED, {
 		query,
-		selectedTool
+		selectedTool,
+		requestId
 	});
 
 	if (selectedTool === TOOL_TYPES.VECTOR_SEARCH) {
@@ -25,7 +28,8 @@ const runAgentWorkflow = async (query) => {
 		vectorMatches = Array.isArray(toolResult) ? toolResult : [];
 		await logPipelineEvent(PIPELINE_EVENTS.TOOL_EXECUTED, {
 			selectedTool,
-			resultCount: vectorMatches.length
+			resultCount: vectorMatches.length,
+			requestId
 		});
 	}
 
@@ -34,7 +38,8 @@ const runAgentWorkflow = async (query) => {
 		toolResult = projects;
 		await logPipelineEvent(PIPELINE_EVENTS.TOOL_EXECUTED, {
 			selectedTool,
-			resultCount: projects.length
+			resultCount: projects.length,
+			requestId
 		});
 	}
 
@@ -42,7 +47,8 @@ const runAgentWorkflow = async (query) => {
 		toolResult = await readFileContext(query, 5);
 		await logPipelineEvent(PIPELINE_EVENTS.TOOL_EXECUTED, {
 			selectedTool,
-			resultCount: Array.isArray(toolResult) ? toolResult.length : 0
+			resultCount: Array.isArray(toolResult) ? toolResult.length : 0,
+			requestId
 		});
 	}
 
@@ -50,7 +56,8 @@ const runAgentWorkflow = async (query) => {
 		toolResult = await githubFetch(query);
 		await logPipelineEvent(PIPELINE_EVENTS.TOOL_EXECUTED, {
 			selectedTool,
-			repositoryCount: Array.isArray(toolResult?.repositories) ? toolResult.repositories.length : 0
+			repositoryCount: Array.isArray(toolResult?.repositories) ? toolResult.repositories.length : 0,
+			requestId
 		});
 	}
 
@@ -64,7 +71,8 @@ const runAgentWorkflow = async (query) => {
 
 	await logPipelineEvent(PIPELINE_EVENTS.VECTOR_RETRIEVED, {
 		query,
-		matchCount: vectorMatches.length
+		matchCount: vectorMatches.length,
+		requestId
 	});
 
 	const projects = await listProjects();

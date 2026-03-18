@@ -38,4 +38,36 @@ const validatePipelineEventsQuery = (query = {}) => {
 	};
 };
 
-export { validateAgentQueryPayload, validateKnowledgeIndexPayload, validatePipelineEventsQuery };
+const validateGithubAutoIndexPayload = (payload = {}) => {
+	const username = typeof payload.username === "string" ? payload.username.trim() : "";
+	const maxRepositoriesValue = Number(payload.maxRepositories);
+
+	if (payload.maxRepositories !== undefined && Number.isNaN(maxRepositoriesValue)) {
+		throw new ApiError(400, "maxRepositories must be a number");
+	}
+
+	return {
+		username: username || undefined,
+		maxRepositories: Number.isNaN(maxRepositoriesValue) ? undefined : maxRepositoriesValue
+	};
+};
+
+const validatePipelineDiagnosticsQuery = (query = {}) => {
+	const limitValue = Number(query.limit);
+
+	if (query.limit !== undefined && Number.isNaN(limitValue)) {
+		throw new ApiError(400, "limit must be a number");
+	}
+
+	return {
+		limit: Number.isNaN(limitValue) ? 100 : limitValue
+	};
+};
+
+export {
+	validateAgentQueryPayload,
+	validateKnowledgeIndexPayload,
+	validatePipelineEventsQuery,
+	validatePipelineDiagnosticsQuery,
+	validateGithubAutoIndexPayload
+};

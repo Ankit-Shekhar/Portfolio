@@ -94,8 +94,76 @@ const callOpenAIModel = async ({ query, context }) => {
 	};
 };
 
+const extractHuggingFaceText = (payload) => {
+	if (Array.isArray(payload) && payload[0]?.generated_text) {
+		return payload[0].generated_text;
+	}
+
+	if (typeof payload?.generated_text === "string") {
+		return payload.generated_text;
+	}
+
+	if (Array.isArray(payload?.choices) && payload.choices[0]?.text) {
+		return payload.choices[0].text;
+	}
+
+	return null;
+};
+
+const callHuggingFaceModel = async ({ query, context }) => {
+	const apiKey = process.env.HF_TOKEN || process.env.HUGGINGFACE_API_KEY;
+
+	if (!apiKey) {
+		return null;
+	}
+
+	const model = process.env.HF_MODEL || "mistralai/Mistral-7B-Instruct-v0.2";
+	const endpoint = process.env.HF_INFERENCE_ENDPOINT || `https://api-inference.huggingface.co/models/${model}`;
+
+	const response = await fetch(endpoint, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${apiKey}`
+		},
+		body: JSON.stringify({
+			inputs: `You are a portfolio AI assistant. Use only supplied context.\n\nQuery: ${query}\n\nContext:\n${context}`,
+			parameters: {
+				max_new_tokens: 300,
+				temperature: 0.3,
+				return_full_text: false
+			},
+			options: {
+				wait_for_model: true
+			}
+		})
+	});
+
+	if (!response.ok) {
+		throw new Error(`Hugging Face request failed with status ${response.status}`);
+	}
+
+	const payload = await response.json();
+
+	if (payload?.error) {
+		throw new Error(`Hugging Face error: ${payload.error}`);
+	}
+
+	const text = extractHuggingFaceText(payload);
+
+	if (!text) {
+		throw new Error("Hugging Face response did not contain text output");
+	}
+
+	return {
+		provider: "huggingface",
+		model,
+		text
+	};
+};
+
 const generateModelResponse = async ({ query, context }) => {
-	const providers = [callGeminiModel, callOpenAIModel];
+	const providers = [callGeminiModel, callOpenAIModel, callHuggingFaceModel];
 	const providerErrors = [];
 
 	for (const provider of providers) {
