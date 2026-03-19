@@ -53,7 +53,7 @@ const runSeedDataJob = async () => {
 		await Project.findOneAndUpdate(
 			{ slug: sampleProject.slug },
 			{ $set: sampleProject },
-			{ upsert: true, new: true, setDefaultsOnInsert: true }
+			{ upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
 		);
 		projectsSeeded += 1;
 	}
@@ -62,7 +62,7 @@ const runSeedDataJob = async () => {
 		await TimelineEvent.findOneAndUpdate(
 			{ title: sampleTimelineEvent.title, yearRange: sampleTimelineEvent.yearRange },
 			{ $set: sampleTimelineEvent },
-			{ upsert: true, new: true, setDefaultsOnInsert: true }
+			{ upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
 		);
 		timelineEventsSeeded += 1;
 	}

@@ -22,7 +22,7 @@ const updateTimelineEventById = async (timelineEventId, payload) => {
 			$set: payload
 		},
 		{
-			new: true,
+			returnDocument: "after",
 			runValidators: true
 		}
 	);

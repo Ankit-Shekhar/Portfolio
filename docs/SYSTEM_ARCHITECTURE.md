@@ -106,15 +106,24 @@ timeline
 ai-agent  
 github  
 contact  
-analytics
+analytics  
+admin
 
 Core backend areas:
 
 config  
 database  
+cache  
 middlewares  
 utils  
 jobs
+
+Security and platform controls:
+
+admin API key guard (`x-admin-key`)  
+Redis-backed distributed rate limiting (with in-memory fallback)  
+Redis TTL response caching for selected read endpoints  
+optional Turnstile verification for contact submissions
 
 ---
 
@@ -163,6 +172,21 @@ LLM generates response
 │
 ▼
 Frontend renders answer
+
+---
+
+# Frontend Integration Contracts
+
+Public endpoints (frontend default mode):
+
+projects, skills, timeline, AI query, contact submit, GitHub reads, analytics event tracking
+
+Protected endpoints (require `x-admin-key`):
+
+AI pipeline events/diagnostics/index controls  
+contact admin list/update/delete  
+analytics admin list/summary  
+admin mode verify endpoint (`GET /api/v1/admin/verify`)
 
 ---
 
@@ -217,7 +241,13 @@ architecture notes
 Redis
 
 event logs  
-agent state caching
+distributed rate limiting counters  
+TTL cache for GitHub profile/repos/readme responses  
+TTL cache for analytics summary responses
+
+Note:
+
+No user login session storage is used in the current portfolio backend design.
 
 ---
 

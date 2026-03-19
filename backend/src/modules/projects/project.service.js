@@ -22,7 +22,7 @@ const updateProjectById = async (projectId, payload) => {
 			$set: payload
 		},
 		{
-			new: true,
+			returnDocument: "after",
 			runValidators: true
 		}
 	);

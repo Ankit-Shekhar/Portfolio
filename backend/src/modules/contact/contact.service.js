@@ -22,7 +22,7 @@ const updateContactMessageById = async (messageId, payload) => {
 			$set: payload
 		},
 		{
-			new: true,
+			returnDocument: "after",
 			runValidators: true
 		}
 	);

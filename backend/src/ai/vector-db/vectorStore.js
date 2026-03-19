@@ -3,11 +3,19 @@ import { createDeterministicEmbedding } from "../embeddings/embedder.js";
 
 const PROJECT_KNOWLEDGE_COLLECTION = "project_knowledge";
 
+const deterministicEmbeddingFunction = {
+	generate: async (texts = []) => {
+		const normalizedTexts = Array.isArray(texts) ? texts : [texts];
+		return normalizedTexts.map((text) => createDeterministicEmbedding(String(text || "")));
+	}
+};
+
 const getProjectKnowledgeCollection = async () => {
 	const chromaClient = getChromaClient();
 
 	return chromaClient.getOrCreateCollection({
 		name: PROJECT_KNOWLEDGE_COLLECTION,
+		embeddingFunction: deterministicEmbeddingFunction,
 		metadata: {
 			description: "Project and architecture grounded knowledge"
 		}

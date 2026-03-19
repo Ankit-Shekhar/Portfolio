@@ -167,40 +167,51 @@ backend/
     │   │   ├── project.controller.js
     │   │   ├── project.service.js
     │   │   ├── project.model.js
-    │   │   └── project.routes.js
+    │   │   ├── project.routes.js
+    │   │   └── project.validation.js
     │   │
     │   ├── skills/
     │   │   ├── skill.controller.js
     │   │   ├── skill.service.js
     │   │   ├── skill.model.js
-    │   │   └── skill.routes.js
+    │   │   ├── skill.routes.js
+    │   │   └── skill.validation.js
     │   │
     │   ├── timeline/
     │   │   ├── timeline.controller.js
     │   │   ├── timeline.service.js
     │   │   ├── timeline.model.js
-    │   │   └── timeline.routes.js
+    │   │   ├── timeline.routes.js
+    │   │   └── timeline.validation.js
     │   │
     │   ├── ai-agent/
     │   │   ├── agent.controller.js
     │   │   ├── agent.service.js
-    │   │   └── agent.routes.js
+    │   │   ├── agent.routes.js
+    │   │   └── agent.validation.js
     │   │
     │   ├── github/
     │   │   ├── github.controller.js
     │   │   ├── github.service.js
-    │   │   └── github.routes.js
+    │   │   ├── github.routes.js
+    │   │   └── github.validation.js
     │   │
     │   ├── contact/
     │   │   ├── contact.controller.js
     │   │   ├── contact.service.js
     │   │   ├── contact.model.js
-    │   │   └── contact.routes.js
+    │   │   ├── contact.routes.js
+    │   │   └── contact.validation.js
     │   │
-    │   └── analytics/
-    │       ├── analytics.controller.js
-    │       ├── analytics.service.js
-    │       └── analytics.routes.js
+    │   ├── analytics/
+    │   │   ├── analytics.controller.js
+    │   │   ├── analytics.service.js
+    │   │   ├── analytics.routes.js
+    │   │   └── analytics.validation.js
+    │   │
+    │   └── admin/
+    │       ├── admin.controller.js
+    │       └── admin.routes.js
     │
     ├── core/           # shared backend system components
     │   ├── config/
@@ -214,7 +225,12 @@ backend/
     │   │
     │   ├── middlewares/
     │   │   ├── error.middleware.js
-    │   │   └── logger.middleware.js
+    │   │   ├── logger.middleware.js
+    │   │   ├── adminAuth.middleware.js
+    │   │   └── rateLimit.middleware.js
+    │   │
+    │   ├── cache/
+    │   │   └── redisCache.js
     │   │
     │   └── utils/
     │       ├── ApiError.js
@@ -274,8 +290,10 @@ architecture notes
 Redis
 
 AI pipeline logs
-temporary cache
-visitor sessions
+distributed rate-limit counters
+TTL API cache (GitHub reads and analytics summary)
+
+No user session storage is currently used.
 
 --------------------------------------------------
 CORE SYSTEM FEATURES

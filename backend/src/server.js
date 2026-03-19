@@ -11,6 +11,17 @@ dotenv.config({
     path: './.env'
 });
 
+const originalConsoleWarn = console.warn.bind(console);
+console.warn = (...args) => {
+    const firstMessage = String(args?.[0] || "");
+
+    if (firstMessage.includes("Cannot instantiate a collection with the DefaultEmbeddingFunction")) {
+        return;
+    }
+
+    originalConsoleWarn(...args);
+};
+
 connectMongoDb()
 //application is starting to listen only when the required databases are connected
 .then(() => connectRedis())

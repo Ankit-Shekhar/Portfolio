@@ -50,6 +50,7 @@ The backend can still respond with fallback behavior without provider keys, but 
 3. Hugging Face Inference:
 - `HF_TOKEN` or `HUGGINGFACE_API_KEY` (required if HF is selected)
 - Optional: `HF_MODEL`
+- Optional: `HF_FALLBACK_MODELS` (comma-separated fallback model IDs)
 - Optional: `HF_INFERENCE_ENDPOINT`
 
 Note:
@@ -88,6 +89,7 @@ Note:
 5. Optional anti-bot config (contact submit)
 - `TURNSTILE_SECRET_KEY` (enables Turnstile verification flow)
 - `TURNSTILE_REQUIRED` (`true` to require a token when Turnstile is configured)
+- `TURNSTILE_SITE_KEY` (frontend widget key; public and used only on client side)
 
 ## 6) Minimum Practical Production Set
 
@@ -132,6 +134,7 @@ ANALYTICS_SUMMARY_CACHE_TTL_SECONDS=120
 # Optional Turnstile bot protection
 # TURNSTILE_SECRET_KEY=<your-turnstile-secret>
 # TURNSTILE_REQUIRED=false
+# TURNSTILE_SITE_KEY=<your-turnstile-site-key>
 
 GITHUB_TOKEN=<your-github-token>
 GITHUB_USERNAME=Ankit-Shekhar

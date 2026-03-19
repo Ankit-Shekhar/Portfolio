@@ -76,7 +76,9 @@ MongoDB for structured data.
 
 Vector database for embeddings.
 
-Redis for event logging and caching.
+Redis for event logging, distributed rate limiting, and selective TTL caching.
+
+Optional Cloudflare Turnstile verification protects public contact submissions.
 
 ---
 

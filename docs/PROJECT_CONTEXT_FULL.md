@@ -429,6 +429,13 @@ Backend technologies include:
 * MongoDB
 * Redis
 
+Current backend platform controls include:
+
+* admin key protected operational endpoints
+* Redis-backed distributed rate limiting
+* selective Redis TTL caching for expensive read endpoints
+* optional Cloudflare Turnstile verification for contact submit
+
 AI system technologies include:
 
 * vector embeddings

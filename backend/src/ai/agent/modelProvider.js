@@ -110,14 +110,20 @@ const extractHuggingFaceText = (payload) => {
 	return null;
 };
 
-const callHuggingFaceModel = async ({ query, context }) => {
+const buildHuggingFaceModelCandidates = () => {
+	const primaryModel = process.env.HF_MODEL || "Qwen/Qwen2.5-7B-Instruct";
+	const fallbackModels = String(
+		process.env.HF_FALLBACK_MODELS || "mistralai/Mistral-7B-Instruct-v0.3,HuggingFaceH4/zephyr-7b-beta"
+	)
+		.split(",")
+		.map((modelName) => modelName.trim())
+		.filter(Boolean);
+
+	return [primaryModel, ...fallbackModels].filter((modelName, index, array) => array.indexOf(modelName) === index);
+};
+
+const callHuggingFaceModelByName = async ({ query, context, model }) => {
 	const apiKey = process.env.HF_TOKEN || process.env.HUGGINGFACE_API_KEY;
-
-	if (!apiKey) {
-		return null;
-	}
-
-	const model = process.env.HF_MODEL || "mistralai/Mistral-7B-Instruct-v0.2";
 	const endpoint = process.env.HF_INFERENCE_ENDPOINT || `https://api-inference.huggingface.co/models/${model}`;
 
 	const response = await fetch(endpoint, {
@@ -160,6 +166,27 @@ const callHuggingFaceModel = async ({ query, context }) => {
 		model,
 		text
 	};
+};
+
+const callHuggingFaceModel = async ({ query, context }) => {
+	const apiKey = process.env.HF_TOKEN || process.env.HUGGINGFACE_API_KEY;
+
+	if (!apiKey) {
+		return null;
+	}
+
+	const modelCandidates = buildHuggingFaceModelCandidates();
+	const errors = [];
+
+	for (const model of modelCandidates) {
+		try {
+			return await callHuggingFaceModelByName({ query, context, model });
+		} catch (error) {
+			errors.push(`${model}: ${error?.message || "unknown error"}`);
+		}
+	}
+
+	throw new Error(`Hugging Face model attempts failed. ${errors.join(" | ")}`);
 };
 
 const generateModelResponse = async ({ query, context }) => {

@@ -22,7 +22,7 @@ const updateSkillById = async (skillId, payload) => {
 			$set: payload
 		},
 		{
-			new: true,
+			returnDocument: "after",
 			runValidators: true
 		}
 	);
