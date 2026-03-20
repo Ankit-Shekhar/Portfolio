@@ -1,0 +1,158 @@
+.os-window {
+  background-color: rgba(30, 30, 30, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #fff;
+  will-change: transform;
+}
+
+.os-window.maximized {
+  border-radius: 0;
+  border: none;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+}
+
+.window-titlebar {
+  background-color: rgba(50, 50, 50, 0.8);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: grab;
+}
+
+.window-titlebar:active {
+  cursor: grabbing;
+}
+
+.os-window.maximized .window-titlebar {
+  cursor: default;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.window-controls button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.btn-close { background-color: #ff5f56; }
+.btn-minimize { background-color: #ffbd2e; }
+.btn-maximize { background-color: #27c93f; }
+
+.btn-close:hover { background-color: #e0443e; }
+.btn-minimize:hover { background-color: #dea125; }
+.btn-maximize:hover { background-color: #1aab29; }
+
+.window-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  color: #e0e0e0;
+  pointer-events: none;
+}
+
+.window-spacer {
+  width: 52px;
+}
+
+.window-content {
+  flex: 1;
+  overflow: auto;
+  background-color: rgba(15, 15, 15, 0.5);
+  cursor: default;
+}
+
+/* Mac Controls */
+.mac-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Windows Controls */
+.windows-titlebar {
+  padding: 0 0 0 12px !important;
+  background-color: #000;
+  border-bottom: 1px solid #333;
+}
+
+.macos-titlebar {
+  background-color: rgba(50, 50, 50, 0.8);
+}
+
+.windows-title {
+  text-align: left;
+  flex: 1;
+}
+
+.macos-title {
+  text-align: center;
+}
+
+.win-controls {
+  display: flex;
+  height: 100%;
+}
+
+.win-btn {
+  background: transparent;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.1s;
+}
+
+.win-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.win-close:hover {
+  background-color: #e81123 !important;
+  color: #fff;
+}
+
+/* OS Window Entrance Animations */
+@keyframes winWindowOpen {
+  0% { opacity: 0; transform: scale(0.97) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.windows-window-anim {
+  animation: winWindowOpen 0.2s cubic-bezier(0.0, 0.0, 0.2, 1) forwards;
+  transform-origin: center;
+}
+
+@keyframes macWindowOpen {
+  0% { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.macos-window-anim {
+  animation: macWindowOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25) forwards;
+  transform-origin: center;
+}

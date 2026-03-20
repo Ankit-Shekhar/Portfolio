@@ -1,0 +1,60 @@
+.evolution-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  /* Smooth transition between background colors */
+  transition: background-color 1s ease-in-out;
+}
+
+.fade-in-out {
+  animation: fadeInOut 1.5s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.95); }
+  20% { opacity: 1; transform: scale(1); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+
+.evolution-content {
+  text-align: center;
+}
+
+.evolution-title {
+  font-size: 4rem;
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.evolution-year {
+  font-size: 1.5rem;
+  opacity: 0.8;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+.evolution-loading-bar {
+  width: 300px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.evolution-loading-progress {
+  height: 100%;
+  background-color: #fff;
+  width: 0%;
+  animation: loadProgress 1.5s linear forwards;
+}
+
+@keyframes loadProgress {
+  to { width: 100%; }
+}
