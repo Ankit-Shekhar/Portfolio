@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useWindowManager } from '../../hooks/useWindowManager';
 
 export default function PersonalizeApp() {
   const os = localStorage.getItem('selectedOS') || 'windows';
+  const { osSettings, updateOsSettings } = useWindowManager();
   
   const wallpapers = {
     windows: [
@@ -28,7 +30,7 @@ export default function PersonalizeApp() {
   };
 
   return (
-    <div className="app-container p-6" style={{ color: '#fff' }}>
+    <div className="app-container p-6" style={{ color: '#fff', overflowY: 'auto', height: '100%' }}>
       <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '24px' }}>Personalization</h2>
       <p style={{ marginBottom: '16px', color: '#a1a1aa' }}>Select a wallpaper for your {os === 'windows' ? 'Windows' : 'macOS'} desktop.</p>
       
@@ -64,6 +66,41 @@ export default function PersonalizeApp() {
           </div>
         ))}
       </div>
+
+      {os === 'macos' && (
+        <div style={{ marginTop: '40px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '24px', maxWidth: '400px' }}>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '24px' }}>Dock Behaviors</h3>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <span style={{ fontSize: '1.1rem' }}>Automatically hide and show the Dock</span>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input 
+                type="checkbox" 
+                checked={osSettings?.dockAutoHide || false}
+                onChange={e => updateOsSettings({ dockAutoHide: e.target.checked })}
+                style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#3b82f6' }}
+              />
+            </label>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '1.1rem' }}>Dock Scale Size</span>
+            <select 
+              value={osSettings?.dockSize || 60}
+              onChange={e => updateOsSettings({ dockSize: Number(e.target.value) })}
+              style={{ 
+                padding: '6px 12px', borderRadius: '6px', background: '#333', 
+                color: '#fff', border: '1px solid #555', fontSize: '1rem', outline: 'none' 
+              }}
+            >
+              <option value={40}>Small</option>
+              <option value={60}>Medium</option>
+              <option value={80}>Large</option>
+              <option value={100}>Extra Large</option>
+            </select>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

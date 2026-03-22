@@ -3,14 +3,25 @@ import { Rnd } from 'react-rnd';
 import { useWindowManager } from '../../hooks/useWindowManager';
 import '../../styles/window.css';
 
-export default function Window({ window }) {
-  const { id, title, isMinimized, isMaximized, zIndex, defaultWidth, defaultHeight, component: Component } = window;
-  const { closeApp, minimizeApp, maximizeApp, focusApp } = useWindowManager();
+export default function Window({ windowData }) {
+  const { id, title, isMinimized, isMaximized, zIndex, defaultWidth, defaultHeight, component: Component } = windowData;
+  const { closeApp, minimizeApp, maximizeApp, focusApp, triggerSnapAssist } = useWindowManager();
 
   const selectedOS = localStorage.getItem('selectedOS') || 'windows';
   
   const [size, setSize] = useState({ width: defaultWidth || 600, height: defaultHeight || 400 });
   const [position, setPosition] = useState({ x: 150 + Math.random() * 50, y: 100 + Math.random() * 50 });
+
+  React.useEffect(() => {
+    const handleForceLayout = (e) => {
+      if (e.detail.id === id) {
+        setPosition({ x: e.detail.layout.x, y: e.detail.layout.y });
+        setSize({ width: e.detail.layout.w, height: e.detail.layout.h });
+      }
+    };
+    window.addEventListener('force-window-layout', handleForceLayout);
+    return () => window.removeEventListener('force-window-layout', handleForceLayout);
+  }, [id]);
 
   if (isMinimized) return null;
 
@@ -30,11 +41,45 @@ export default function Window({ window }) {
     </div>
   );
 
+  const topOffset = selectedOS === 'macos' ? 24 : 0;
+  // Fallback fixed bottom offset for max bounds without needing deep context bindings at render tick
+  const bottomOffset = selectedOS === 'macos' ? 80 : 48;
+
+  const maxProps = {
+    size: { width: '100%', height: `calc(100vh - ${topOffset}px - ${bottomOffset}px)` },
+    position: { x: 0, y: topOffset }
+  };
+
   return (
     <Rnd
-      size={isMaximized ? { width: '100%', height: '100%' } : size}
-      position={isMaximized ? { x: 0, y: 0 } : position}
-      onDragStop={(e, d) => { if(!isMaximized) setPosition({ x: d.x, y: d.y }) }}
+      size={isMaximized ? maxProps.size : size}
+      position={isMaximized ? maxProps.position : position}
+      onDragStop={(e, d) => {
+        if(!isMaximized) {
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+          const topOffset = selectedOS === 'macos' ? 24 : 0;
+          
+          if (d.x <= 10) {
+            // Snap Left
+            setPosition({ x: 0, y: topOffset });
+            setSize({ width: w / 2, height: h - topOffset });
+            triggerSnapAssist({ side: 'left', primaryAppId: id });
+          } else if (d.x + size.width >= w - 10) {
+            // Snap Right
+            setPosition({ x: w / 2, y: topOffset });
+            setSize({ width: w / 2, height: h - topOffset });
+            triggerSnapAssist({ side: 'right', primaryAppId: id });
+          } else if (d.y <= topOffset + 10) {
+            // Snap Top (Maximize)
+            maximizeApp(id);
+            triggerSnapAssist(null);
+          } else {
+            setPosition({ x: d.x, y: d.y });
+            triggerSnapAssist(null);
+          }
+        }
+      }}
       onResizeStop={(e, direction, ref, delta, pos) => {
         if(!isMaximized) {
           setSize({ width: ref.style.width, height: ref.style.height });

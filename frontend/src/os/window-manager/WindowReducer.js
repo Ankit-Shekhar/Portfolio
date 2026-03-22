@@ -1,6 +1,7 @@
 export const initialWindowState = {
   windows: [], // Array of open windows { id, title, isMinimized, isMaximized, zIndex, defaultWidth, defaultHeight }
   activeWindowId: null,
+  snapAssist: null, // { side: 'left' | 'right', primaryAppId: string }
 };
 
 export function windowReducer(state, action) {
@@ -72,13 +73,20 @@ export function windowReducer(state, action) {
       };
     }
 
+    case 'SET_SNAP_ASSIST': {
+      return {
+        ...state,
+        snapAssist: action.payload
+      };
+    }
+
     default:
       return state;
   }
 }
 
 function getHighestZIndex(windows) {
-  return windows.reduce((max, w) => Math.max(max, w.zIndex || 0), 0);
+  return windows.reduce((max, w) => Math.max(max, w.zIndex || 100), 100);
 }
 
 function getTopWindowId(windows) {
